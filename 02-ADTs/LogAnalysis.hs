@@ -31,7 +31,7 @@ build []     = Leaf
 build (l:ls) = insert l (build ls)
 
 inOrder :: MessageTree -> [LogMessage]
-inOrder Leaf = []
+inOrder Leaf         = []
 inOrder (Node l m r) = inOrder l ++ [m] ++ inOrder r
 
 whatWentWrong :: [LogMessage] -> [String]
@@ -43,4 +43,4 @@ severeError _                          = False
 
 getError :: LogMessage -> String
 getError (LogMessage _ _ m) = m
-getError _ = undefined
+getError _                  = undefined
