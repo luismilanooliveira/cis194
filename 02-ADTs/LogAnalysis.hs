@@ -12,7 +12,9 @@ parseMessage msg = case (words msg) of
                 _          -> Unknown msg
 
 parse :: String -> [LogMessage]
-parse = map parseMessage . lines
+parse = parseHelper . lines
+  where  parseHelper [] = []
+         parseHelper (xs:xss) = parseMessage xs : parseHelper xss
 
 insert :: LogMessage -> MessageTree -> MessageTree
 insert (Unknown _) t    = t
@@ -35,12 +37,16 @@ inOrder Leaf         = []
 inOrder (Node l m r) = inOrder l ++ [m] ++ inOrder r
 
 whatWentWrong :: [LogMessage] -> [String]
-whatWentWrong = map getError . inOrder . build . filter severeError
+whatWentWrong = errorMessages . inOrder . build . severeErrors
 
-severeError :: LogMessage -> Bool
-severeError (LogMessage (Error n) _ _) = n >= 50
-severeError _                          = False
+severeErrors :: [LogMessage] -> [LogMessage]
+severeErrors []                                 = []
+severeErrors (lm@(LogMessage (Error n) _ _):ls) = if n >= 50
+                                                  then lm : severeErrors ls
+                                                  else severeErrors ls
+severeErrors (_:ls)                             = severeErrors ls
 
-getError :: LogMessage -> String
-getError (LogMessage _ _ m) = m
-getError _                  = undefined
+errorMessages :: [LogMessage] -> [String]
+errorMessages []                      = []
+errorMessages ((LogMessage _ _ m):ls) = m : errorMessages ls
+errorMessages _                       = undefined
