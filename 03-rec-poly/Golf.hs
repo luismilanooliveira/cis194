@@ -5,7 +5,7 @@ module Golf where
 import Data.List (transpose)
 
 skips :: [a] -> [[a]]
-skips ls = zipWith p [1..length ls] $ repeat ls
+skips xs = zipWith p [1..length xs] $ repeat xs
 
 p :: Int -> [a] -> [a]
 p n = foldr s [] . zip [1..]
@@ -18,22 +18,17 @@ localMaxima xs = m . f . z $ xs
         z l  = zip3 l (tail l) (drop 2 l)
 
 
--- histogram :: [Integer] -> String
-histogram is = (unlines . filter (not . all (== ' '))
-  . transpose . render . counter $ is) ++ "==========\n0123456789\n"
+histogram :: [Integer] -> String
+histogram is = (unlines . filter (not . all (== ' ')) . transpose
+  . map snd . counter $ is) ++ "==========\n0123456789\n"
 
-ls = map (,(replicate 10 (-1))) [0..9]
-
-counter :: [Integer] -> [(Integer, [Integer])]
+counter :: [Integer] -> [(Integer, String)]
 counter = foldr insert ls
+  where ls = map (,(replicate 10 (' '))) [0..9]
 
-insert :: Eq a => a -> [(a, [a])] -> [(a, [a])]
-insert _ []               = []
+insert :: Integer -> [(Integer, String)] -> [(Integer, String)]
+insert _ []             = []
+insert _ ((_, []):_)    = []
 insert n ((k,x:xs):xss) = if n == k
-                             then (k,xs ++ [n]):xss
+                             then (k,xs ++ "*"):xss
                              else (k,x:xs):insert n xss
-render :: [(Integer,[Integer])] -> [String]
-render list = map (map intToStar) $ map snd list
-  where intToStar c = if c == (-1)
-                         then ' '
-                         else '*'
