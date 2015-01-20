@@ -30,5 +30,5 @@ insert :: Integer -> [(Integer, String)] -> [(Integer, String)]
 insert _ []             = []
 insert _ ((_, []):_)    = []
 insert n ((k,x:xs):xss) = if n == k
-                             then (k,xs ++ "*"):xss
+                             then (k,xs ++ "*"):xs
                              else (k,x:xs):insert n xss
