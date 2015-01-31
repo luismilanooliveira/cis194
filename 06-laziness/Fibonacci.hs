@@ -1,5 +1,5 @@
 {-# LANGUAGE FlexibleInstances #-}
-{-# OPTIONS_GHC -fno-warn-missing-methods #-}
+{-# OPTIONS_GHC  -Wall -fno-warn-missing-methods #-}
 
 module Fibonacci where
 
@@ -14,6 +14,8 @@ fibs1 = map fib [0..]
 fibs2 :: [Integer]
 fibs2 = 0:1:zipWith (+) fibs2 (tail fibs2)
 
+-- Exercises on Streams. A Stream is a sequence with length necessarily infinite
+
 data Stream a = a :- Stream a
 infixr  :-
 
@@ -27,16 +29,16 @@ streamRepeat :: a -> Stream a
 streamRepeat z = z:-streamRepeat z
 
 streamMap :: (a -> b) -> Stream a -> Stream b
-streamMap f (z:- s) = f z:- streamMap f s
+streamMap f (z:- zs) = f z:- streamMap f zs
 
 streamFromSeed :: (a -> a) -> a -> Stream a
-streamFromSeed f s = s:- streamFromSeed f (f s)
+streamFromSeed f z = z:- streamFromSeed f (f z)
 
 nats :: Stream Integer
 nats = streamFromSeed (+1) 0
 
 interleaveStreams :: Stream a -> Stream a -> Stream a
-interleaveStreams (z :- s1) (y :- s2) = z :- y :- interleaveStreams s1 s2
+interleaveStreams (z :- zs) (y :- ys) = z :- y :- interleaveStreams zs ys
 
 ruler :: Stream Integer
 ruler = interleaveStreams (streamRepeat 0) $ interleaveStreams (streamRepeat 1)
@@ -44,13 +46,13 @@ ruler = interleaveStreams (streamRepeat 0) $ interleaveStreams (streamRepeat 1)
 
 -- ex6
 x :: Stream Integer
-x = 0 :- (1 :- streamRepeat 0)
+x = 0 :- 1 :- streamRepeat 0
 
 instance Num (Stream Integer) where
   fromInteger n = n :- streamRepeat 0
   negate = streamMap negate
   (+) (z:- zs) (y:- ys) = (z + y):- (+) zs ys
-  (*) (z:- zs) s2@(y:- ys) = (z * y):- ((streamMap (*z) ys) + (zs * s2))
+  (*) (z:- zs) s2@(y:- ys) = (z * y):- (streamMap (*z) ys) + (zs * s2)
 
 instance Fractional (Stream Integer) where
   (/) (z:- zs) (y:- ys) = q
@@ -67,9 +69,8 @@ instance Num Matrix where
     Matrix (a11 * b11 + a12 * b21) (a11 * b12 + a12 * b22)
            (a21 * b11 + a22 * b21) (a21 * b12 + a22 * b22)
 
-matrixF = (Matrix 1 1 1 0)
-
 fibs4 :: Integer -> Integer
 fibs4 0 = 0
 fibs4 n = let (Matrix _ f _ _) = matrixF ^ n
+              matrixF = (Matrix 1 1 1 0)
            in f
