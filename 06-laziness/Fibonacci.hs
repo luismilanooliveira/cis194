@@ -23,7 +23,7 @@ streamToList :: Stream a -> [a]
 streamToList (z:- s) = z:streamToList s
 
 instance Show a => Show (Stream a) where
-  show s = show $ take 50 $ streamToList s
+  show = show . take 50 . streamToList
 
 streamRepeat :: a -> Stream a
 streamRepeat z = z:-streamRepeat z
