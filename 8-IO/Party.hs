@@ -37,8 +37,11 @@ nextLevel e gls =
 -- ex4
 maxFun :: Tree Employee -> GuestList
 maxFun tree = let pair = treeFold nextLevel tree
-          in moreFun (fst pair) (snd pair)
+          in uncurry moreFun pair
 
+-- ex5
+
+-- helper function that formats the output as asked
 format :: GuestList -> String
 format (GL emps f)  = unlines $ ("Total Fun: " ++ show f):sort names
   where names = map empName emps
