@@ -2,7 +2,7 @@
    due Monday, 1 April
 -}
 
-module AParser where
+module AParser (Parser, runParser, satisfy, char, posInt) where
 
 import Control.Applicative
 
@@ -70,32 +70,13 @@ instance Functor Parser where
 -- ex2
 --
 instance Applicative Parser where
-  pure a  = Parser (\_ -> Just (a, []))
+  pure a  = Parser (\s -> Just (a, s))
   p1 <*> p2 = Parser (\s -> case runParser p1 s of
                       Nothing -> Nothing
-                      Just (function, r) ->
+                      Just (f, r) ->
                         case runParser p2 r of
                              Nothing -> Nothing
-                             Just (value, rest) -> Just (function value, rest))
-
--- testing the applicative instance
-type Name = String
-data Employee = Emp { name :: Name, phone :: String }
-  deriving Show
-
--- idiotic parsers, just for testings
-parseName :: Parser Name
-parseName = Parser (\s -> Just (take 3 s, drop 3 s))
-
-parsePhone :: Parser String
-parsePhone = Parser (\s -> Just (take 3 s, drop 3 s))
-
-parseFail :: Parser String
-parseFail = Parser (\_ -> Nothing)
-
--- returns a Employee from a String
-parseEmployee :: Parser Employee
-parseEmployee = Emp <$> parseName <*> parsePhone
+                             Just (v, rest) -> Just (f v, rest))
 
 -- ex3
 --
@@ -116,7 +97,7 @@ intPair = result <$> posInt <*> space <*> posInt
 
 -- ex4
 instance Alternative Parser where
-  empty     = Parser (\s -> Nothing)
+  empty     = Parser (\_ -> Nothing)
   p1 <|> p2 = Parser (\s -> runParser p1 s <|> runParser p2 s)
 
 int_ :: Parser ()
@@ -135,7 +116,14 @@ satisfy_ p = Parser f
         | p x       = Just ((), xs)
         | otherwise = Nothing
 
-
-
 intOrUpperCase :: Parser ()
 intOrUpperCase = int_ <|> satisfy_ isUpper
+
+-- Functions from week 11 lecture
+
+-- (*>)       :: Applicative f => f a -> f b -> f b
+-- ap1 *> ap2 = (const id) <$> ap1 <*> ap2
+
+-- mapA       :: Applicative f => (a -> f b) -> ([a] -> f [b])
+-- sequenceA  :: Applicative f => [f a] -> f [a]
+-- replicateA :: Applicative f => Int -> f a -> f [a]
