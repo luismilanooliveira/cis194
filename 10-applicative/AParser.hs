@@ -114,3 +114,28 @@ intPair :: Parser [Integer]
 intPair = result <$> posInt <*> space <*> posInt
   where result a b c = [a, c]
 
+-- ex4
+instance Alternative Parser where
+  empty     = Parser (\s -> Nothing)
+  p1 <|> p2 = Parser (\s -> runParser p1 s <|> runParser p2 s)
+
+int_ :: Parser ()
+int_ = Parser f
+  where
+    f xs
+      | null ns   = Nothing
+      | otherwise = Just ((), rest)
+      where (ns, rest) = span isDigit xs
+
+satisfy_ :: (Char -> Bool) -> Parser ()
+satisfy_ p = Parser f
+  where
+    f [] = Nothing
+    f (x:xs)
+        | p x       = Just ((), xs)
+        | otherwise = Nothing
+
+
+
+intOrUpperCase :: Parser ()
+intOrUpperCase = int_ <|> satisfy_ isUpper
