@@ -51,7 +51,8 @@ atom = N <$> posInt <|> I <$> ident
 
 parseSExpr :: Parser SExpr
 parseSExpr = spaces *>
-                 (A <$> atom <|>  -- a S-expression is either an atom
+                 (A <$> atom -- a S-expression is either an atom
+                  <|> -- or
                    char '(' *>
-                 (Comb <$> zeroOrMore parseSExpr) -- or a list of S-expressions
+                     (Comb <$> oneOrMore parseSExpr) -- a list of S-expressions
                    <* char ')') <* spaces
