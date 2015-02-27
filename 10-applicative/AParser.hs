@@ -33,6 +33,7 @@ satisfy p = Parser f
 char :: Char -> Parser Char
 char c = satisfy (== c)
 
+
 {- For example:
 
 *Parser> runParser (satisfy isUpper) "ABC"
@@ -89,6 +90,27 @@ parseName = Parser (\s -> Just (take 3 s, drop 3 s))
 parsePhone :: Parser String
 parsePhone = Parser (\s -> Just (take 3 s, drop 3 s))
 
+parseFail :: Parser String
+parseFail = Parser (\_ -> Nothing)
+
 -- returns a Employee from a String
 parseEmployee :: Parser Employee
 parseEmployee = Emp <$> parseName <*> parsePhone
+
+-- ex3
+--
+-- parses "ab" and returns (('a','b'), rest)
+abParser :: Parser (Char, Char)
+abParser = (,) <$> char 'a' <*> char 'b'
+
+-- parses "ab" and returns ((), rest)
+abParser_ :: Parser ()
+abParser_ =  (\_ -> pure ()) <$> char 'a' <*> char 'b'
+
+space :: Parser Char
+space = char ' '
+
+intPair :: Parser [Integer]
+intPair = result <$> posInt <*> space <*> posInt
+  where result a b c = [a, c]
+
