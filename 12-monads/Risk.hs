@@ -30,6 +30,8 @@ type BattleResult = (Army, Army)
 
 data Battlefield = Battlefield { attackers :: Army, defenders :: Army }
 
+-- ex2
+--
 battle :: Battlefield -> Rand StdGen Battlefield
 battle bf = do
               let nAt = min 3 (attackers bf - 1)
@@ -45,11 +47,15 @@ process :: [(Int, Int)] -> BattleResult
 process = foldr go (0, 0)
   where go (f, s) (r', r'') = if f > s then (r' + 1, r'') else (r', r'' + 1)
 
+-- ex3
+--
 invade :: Battlefield -> Rand StdGen Battlefield
 invade bf
   | attackers bf < 2 || defenders bf < 1 = return bf
   | otherwise                            = battle bf >>= invade
 
+-- ex4
+--
 attackerVictory :: Battlefield -> Bool
 attackerVictory = (<= 0) . defenders
 
