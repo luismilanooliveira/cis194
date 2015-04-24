@@ -1,8 +1,6 @@
-# Introduction to Haskell Solutions
-These are the answers of me attempting to work through Brent Yorgey's [CIS 194(Spring 2013): Introduction to Haskell](http://www.seas.upenn.edu/~cis194/spring13/index.html)
+# Introduction to Haskell
+This repo contains source code from my answers to the exercises proposed in Brent Yorgey's [CIS 194(Spring 2013): Introduction to Haskell](http://www.seas.upenn.edu/~cis194/spring13/index.html) course.
 
-I decided to try this because of a recommendation by [@bitemyapp](http://github.com/bitemyapp)
+I decided to try this because of a [recommendation](https://github.com/bitemyapp/learnhaskell) by [@bitemyapp](http://github.com/bitemyapp)
 
-Link to the recommendation: https://github.com/bitemyapp/learnhaskell
-
-For more information about learning haskell resources: http://bitemyapp.com/posts/2014-12-31-functional-education.html
+The course is very well structured from a didatic point of view and I surely recommend it to anyone who wants to learn some Haskell.
